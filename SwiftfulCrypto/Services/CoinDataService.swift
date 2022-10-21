@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 class CoinDataService {
-    private let network = NetworkingManager.network
+    private let network = NetworkingManager()
     private  var request = Request()
     @Published var coins : [CoinModel] = []
         

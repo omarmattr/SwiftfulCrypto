@@ -9,25 +9,22 @@ import Foundation
 import Combine
 
 class NetworkingManager {
-    static var network = NetworkingManager()
-    
     var subscription: AnyCancellable?
-    
-    private init() {
-    }
+
     func download <T: Codable>(_ request: Request,decodeToType type: T.Type,completionHandler: @escaping (T) -> ()){
         guard let request = initRequest(request) else {return}
-        subscription =  download(request: request)
+
+        subscription =  download(withRequest: request)
             .decode (type: T.self, decoder: JSONDecoder ())
             .sink(receiveCompletion: handleCompletion, receiveValue: { [weak self] (data) in
-               
                 completionHandler(data)
                 self?.subscription?.cancel()
             })
         
+        
     }
     
-     func download (request: URLRequest) -> AnyPublisher<Data,Error> {
+    func download (withRequest request: URLRequest) -> AnyPublisher<Data,Error> {
         return URLSession.shared.dataTaskPublisher(for: request)
             .subscribe(on: DispatchQueue.global(qos: .default))
             .tryMap{ (output) -> Data in

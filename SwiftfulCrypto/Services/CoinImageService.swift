@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 class CoinImageService {
-    private let network = NetworkingManager.network
+    private let network = NetworkingManager()
     private var request = Request()
     @Published var image : UIImage? = nil
     
@@ -32,7 +32,7 @@ class CoinImageService {
     
     private func downloadImage(url:URL) {
         imageSubscription =
-        network.download(request: URLRequest(url: url))
+        network.download(withRequest: URLRequest(url: url))
             .tryMap({ (data) -> UIImage? in return UIImage(data: data)
             })
             .sink(receiveCompletion:
