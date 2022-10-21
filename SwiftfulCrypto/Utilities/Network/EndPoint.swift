@@ -9,5 +9,5 @@ enum EndPoint: String {
     
     case markets = "api/v3/coins/markets"
     case customURL = ""
-    
+    case global = "api/v3/global"
 }
