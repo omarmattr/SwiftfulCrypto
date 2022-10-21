@@ -10,11 +10,16 @@ import SwiftUI
 struct HomeView: View {
     
     @State private var showPortfolio: Bool = false
+    @State private var showPortfolioView: Bool = false
+
     @EnvironmentObject private var vm : HomeViewModel
     var body: some View {
         ZStack{
             Color.theme.background.ignoresSafeArea()
-            
+                .sheet(isPresented: $showPortfolioView) {
+                    PortfolioView()
+                        .environmentObject(vm)
+                }
             VStack{
                 headerView
                 HomeStatsView(showPortfolio: $showPortfolio)
@@ -51,6 +56,9 @@ extension HomeView {
             CircleButtonView(iconName: showPortfolio ? "plus" : "info")
                 .animation(.none,value: showPortfolio)
                 .background(CircleButtonAnimationView(animate: $showPortfolio))
+                .onTapGesture {
+                    showPortfolioView.toggle()
+                }
             Spacer()
             Text(showPortfolio ? "Portfolio" : "Live Prices")
                 .font(.headline)
@@ -87,14 +95,48 @@ extension HomeView {
     }
     private var columnTitles: some View {
         HStack {
-            Text ("Coin")
+            HStack(spacing: 4){
+                Text ("Coin")
+                Image(systemName: "chevron.down")
+                    .opacity(vm.sortOption == .rank || vm.sortOption == .rankReversed ? 1 : 0)
+                    .rotationEffect(.degrees(vm.sortOption == .rank ? 0 :  180))
+            }
+            .onTapGesture {
+                vm.sortOption  =  vm.sortOption == .rank ? .rankReversed :  .rank
+            }
             Spacer()
             if showPortfolio {
-                Text ("Holdings")
+                HStack(spacing: 4){
+                    Text ("Holdings")
+                    Image(systemName: "chevron.down")
+                        .opacity(vm.sortOption == .holdings || vm.sortOption == .holdingsReversed ? 1 : 0)
+                        .rotationEffect(.degrees(vm.sortOption == .holdings ? 0 :  180))
+
+
+                }
+                .onTapGesture {
+                    vm.sortOption  =  vm.sortOption == .holdings ? .holdingsReversed :  .holdings
+                }
             }
-            Text("Price")
-                .frame (width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
-            
+            HStack(spacing: 4){
+                Text("Price")
+                    .frame (width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
+                Image(systemName: "chevron.down")
+                    .opacity(vm.sortOption == .price || vm.sortOption == .priceReversed ? 1 : 0)
+                    .rotationEffect(.degrees(vm.sortOption == .price ? 0 :  180))
+            }
+            .onTapGesture {
+                vm.sortOption  =  vm.sortOption == .price ? .priceReversed :  .price
+            }
+            Button {
+                withAnimation(.linear(duration: 2)){
+                    vm.reloadData()
+                }
+            } label: {
+                Image(systemName: "goforward")
+            }
+            .rotationEffect(.degrees(vm.loading ? 360 : 0),anchor: .center)
+
         }
         .font (.caption)
         .foregroundColor(Color.theme.secondaryText)
