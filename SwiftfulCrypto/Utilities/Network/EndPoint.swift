@@ -5,9 +5,20 @@
 //  Created by omarmattr on 13/08/2022.
 //
 
-enum EndPoint: String {
+enum EndPoint :Equatable {
     
-    case markets = "api/v3/coins/markets"
-    case customURL = ""
-    case global = "api/v3/global"
+    case markets, customURL,global,coinDetail(_:String)
+    
+    var stringValue: String {
+        switch self {
+        case .markets:
+            return  "api/v3/coins/markets"
+        case .customURL:
+            return ""
+        case .global:
+            return "api/v3/global"
+        case .coinDetail(let name):
+            return "api/v3/coins/\(name)"
+        }
+    }
 }

@@ -19,6 +19,8 @@ struct SwiftfulCryptoApp: App {
             NavigationView {
                 HomeView()
                     .navigationBarHidden(true)
+                    .navigationBarTitle("", displayMode: .inline)
+
                 
             }
             .environmentObject(vm)

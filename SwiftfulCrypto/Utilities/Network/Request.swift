@@ -19,7 +19,7 @@ struct Request {
             if endPoint == .customURL {
                 return self.otherPath
             }
-            return BASE_URL + endPoint.rawValue
+            return BASE_URL + endPoint.stringValue
         }
         
     }

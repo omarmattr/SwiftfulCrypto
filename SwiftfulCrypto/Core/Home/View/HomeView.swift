@@ -11,7 +11,7 @@ struct HomeView: View {
     
     @State private var showPortfolio: Bool = false
     @State private var showPortfolioView: Bool = false
-
+    
     @EnvironmentObject private var vm : HomeViewModel
     var body: some View {
         ZStack{
@@ -38,6 +38,7 @@ struct HomeView: View {
                 
             }
         }
+        
     }
 }
 
@@ -79,16 +80,27 @@ extension HomeView {
     private var allCoinsListView : some View {
         List{
             ForEach(vm.allCoins){ coin in
+                
                 CoinRowView(coin:coin, showHoldingsColumn: false)
                     .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+                    .background(
+                        NavigationLink(destination: DetailView(coin: coin)){
+                            EmptyView()}
+                            .opacity(0))
+                
             }
         }
         .listStyle(.plain)
     }
+    
     private var portfolioCoinsList : some View {
         List{
             ForEach(vm.portfolioCoins){ coin in
                 CoinRowView(coin:coin, showHoldingsColumn: true)
+                    .background(
+                        NavigationLink{DetailView(coin: coin)} label: {EmptyView()}
+                            .opacity(0)
+                    )
             }
         }
         .listStyle(.plain)
@@ -111,8 +123,8 @@ extension HomeView {
                     Image(systemName: "chevron.down")
                         .opacity(vm.sortOption == .holdings || vm.sortOption == .holdingsReversed ? 1 : 0)
                         .rotationEffect(.degrees(vm.sortOption == .holdings ? 0 :  180))
-
-
+                    
+                    
                 }
                 .onTapGesture {
                     vm.sortOption  =  vm.sortOption == .holdings ? .holdingsReversed :  .holdings
@@ -136,7 +148,7 @@ extension HomeView {
                 Image(systemName: "goforward")
             }
             .rotationEffect(.degrees(vm.loading ? 360 : 0),anchor: .center)
-
+            
         }
         .font (.caption)
         .foregroundColor(Color.theme.secondaryText)
