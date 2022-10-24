@@ -11,6 +11,7 @@ struct HomeView: View {
     
     @State private var showPortfolio: Bool = false
     @State private var showPortfolioView: Bool = false
+    @State private var showSettingsView: Bool = false
     
     @EnvironmentObject private var vm : HomeViewModel
     var body: some View {
@@ -19,6 +20,9 @@ struct HomeView: View {
                 .sheet(isPresented: $showPortfolioView) {
                     PortfolioView()
                         .environmentObject(vm)
+                }
+                .sheet(isPresented: $showSettingsView) {
+                    SettingsView()
                 }
             VStack{
                 headerView
@@ -30,8 +34,20 @@ struct HomeView: View {
                         .transition(.move(edge: .leading))
                     
                 }else{
-                    portfolioCoinsList
-                        .transition(.move(edge: .trailing))
+                    ZStack(alignment: .top) {
+                        if vm.portfolioCoins.isEmpty && vm.searchText.isEmpty {
+                            Text ("You haven't added any coins to your portfolio yet. Click the + button to get started!")
+                                .font (.callout)
+                                .foregroundColor (Color.theme .accent)
+                                .fontWeight(.medium)
+                                .multilineTextAlignment(.center)
+                                .padding (50)
+                        } else {
+                            portfolioCoinsList
+                        }
+                        
+                    }
+                    .transition(.move(edge: .trailing))
                     
                 }
                 Spacer(minLength: 0)
@@ -58,7 +74,11 @@ extension HomeView {
                 .animation(.none,value: showPortfolio)
                 .background(CircleButtonAnimationView(animate: $showPortfolio))
                 .onTapGesture {
-                    showPortfolioView.toggle()
+                    if showPortfolio {
+                        showPortfolioView.toggle()
+                    }else{
+                        showSettingsView.toggle()
+                    }
                 }
             Spacer()
             Text(showPortfolio ? "Portfolio" : "Live Prices")

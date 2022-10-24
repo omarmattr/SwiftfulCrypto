@@ -19,6 +19,8 @@ struct ColorTheme {
     
     let accent = Color("AccentColor")
     let background = Color("BackgroundColor")
+    let background2 = Color("Background")
+
     let green = Color("GreenColor")
     let red = Color("RedColor")
     let secondaryText = Color("SecondaryTextColor")
